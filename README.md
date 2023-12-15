@@ -6,6 +6,12 @@ The code provided here constitutes a simple Java application aimed at checking t
 Tests the port range for the passed IP addresses. Possibility of passing it directly through the arguments of the main method, as well as by providing a file in which each address is a separate line.
 Each computer checked in a separate thread, this thread creates a separate port for each port. This approach opens the door to further expansion, thanks to information about which port is being tested, it is possible to automatically take further steps.
 
+By default, it creates files in the following format:
+- Open_IP.txt - saving open ports
+- Close_IP.txt - saving close ports
+<br>
+Where each line is a specific address and port (In order to make future operations easier, e.g. processing files starting with Open_, then we have a specific address and port in the line).
+
 ### Main.java File
 
 The `Main.java` file contains the main class `Main`, which executes the core logic of the program. The application checks the availability of ports within a specified range of parameters and writes the results to files.
@@ -23,25 +29,6 @@ To run the application, follow these steps:
 2. Run the application, providing appropriate arguments. For example:
 
 Where `127.0.0.1` is the IP address you want to check.
-
-## Variables and Parameters
-
-### In the Main.java file
-
-- `IP`: The IP address, initially set to `127.0.0.1`.
-- `fileNameOpen`: The name of the file where open port results are saved (default: `open.txt`).
-- `fileNameClose`: The name of the file where closed port results are saved (default: `close.txt`).
-- `timeout`: The timeout for connection in milliseconds (default: `500`).
-- `DELAY`: The delay between running check threads in milliseconds (default: `100`).
-- `OFFSET`: The number of threads running simultaneously (default: `200`).
-
-### In the CheckThread.java file
-
-- `IP`: The IP address to be checked.
-- `port`: The port number to be checked.
-- `writerOpen`: The writer for writing open ports.
-- `writerClose`: The writer for writing closed ports.
-- `timeout`: The timeout for connection in milliseconds.
 
 ## Other Notes
 
