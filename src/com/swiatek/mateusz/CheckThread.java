@@ -28,17 +28,12 @@ public class CheckThread extends Thread {
             synchronized(writerOpen) {
                 writerOpen.write(IP + ":" + port + "\n");
                 writerOpen.flush();
-                synchronized (threadList) {
-                    threadList.remove(this);
-                }
             }
         } catch (Exception e){
-            synchronized (threadList) {
-                threadList.remove(this);
-            }
             try {
                 synchronized(writerClose) {
                     writerClose.write("Closed: " + IP + ":" + port + "\n");
+                    writerClose.flush();
                 }
             } catch (IOException ex) {
                 System.err.println("Port: " + port + "Exception file: " + ex);
