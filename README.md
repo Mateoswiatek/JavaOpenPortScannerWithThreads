@@ -3,6 +3,8 @@
 ## Code Overview
 
 The code provided here constitutes a simple Java application aimed at checking the availability of ports within a specified range.
+Tests the port range for the passed IP addresses. Possibility of passing it directly through the arguments of the main method, as well as by providing a file in which each address is a separate line.
+Each computer checked in a separate thread, this thread creates a separate port for each port. This approach opens the door to further expansion, thanks to information about which port is being tested, it is possible to automatically take further steps.
 
 ### Main.java File
 
