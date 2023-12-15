@@ -2,6 +2,8 @@ package com.swiatek.mateusz;
 
 import java.io.BufferedWriter;
 import java.io.FileWriter;
+import java.util.ArrayList;
+import java.util.List;
 
 /*
 * Opern port:
@@ -14,43 +16,48 @@ public class Main {
         String fileNameOpen = "open.txt";
         String fileNameClose = "close.txt";
         int timeout = 500;
-        int DELAY = 100;
+        int DELAY = 1;
         int OFFSET = 200; // how many threads are running at the same time
+        List<Thread> threadList = new ArrayList<>();
 
         if(args.length > 0){
             IP = args[0];
         }
         // nie trzeba zamykać, try-with-resources
         // max 65 535
+
+        // Testowy
+        new Thread(() -> {
+            int newSize = -1;
+            while(true) {
+                if(newSize != threadList.size()) {
+                    newSize = threadList.size();
+                    System.out.println(newSize);
+                }
+            }
+        }).start();
+
         try(
             BufferedWriter writerOpen = new BufferedWriter(new FileWriter(fileNameOpen));
             BufferedWriter writerClose = new BufferedWriter(new FileWriter(fileNameClose))
         ){
             for(int i = 0; i <3000; i+=OFFSET){
                 for(int j=0; j < OFFSET; j++){
-                    //System.out.println(i+j);
-                    new CheckThread(IP, i+j, writerOpen, writerClose, timeout).start();
+                    CheckThread thread = new CheckThread(IP, i+j, writerOpen, writerClose, timeout, threadList);
+                    synchronized (threadList) {
+                        threadList.add(thread);
+                    }
+                    thread.start();
                 }
                 System.out.println("Added for checked: " + i);
                 Thread.sleep(DELAY);  // A break between subsequent packs of threads.
             }
-
-            long startTime = System.currentTimeMillis();
-            System.out.println("Saving...");
-            // If the checking threads have these objects, it will wait here -> ensuring that all data is written correctly.
-            synchronized (writerOpen) {
-                System.out.println("Saved Open port");
-            }
-            synchronized (writerClose){
-                System.out.println("Saved Close port.");
-            }
-            //Thread.sleep(2000); //  time for saving to file. An old, naive, heuristic way of ensuring that all data is recorded
-
-            long endTime = System.currentTimeMillis();
-            long duration = endTime - startTime;
-            System.out.println("Time: " + duration + " milisekund");
         } catch (Exception e) {
             System.err.println(e);
         }
+        while(!threadList.isEmpty()){
+            System.out.println(threadList.size());
+        }
+        System.out.println("End!");
     }
 }
