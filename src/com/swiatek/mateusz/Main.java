@@ -17,8 +17,9 @@ public class Main {
     public static void main(String[] args) {
         //String IP = "127.0.0.1";
         int minPort = 1;
-        int maxPort = 65535;
+        int maxPort = 200; // 65535
         int timeout = 100;
+        int offset = 1000;
         // List<Thread> threadComputerList; // when splitting into classes, you will need to check the state of the computers' threads.
         if(args[0].equals("-")){
             int ilosc_komp = 0;
@@ -27,7 +28,7 @@ public class Main {
                 String ip;
                 while ((ip = br.readLine()) != null) {
                     String finalIP = ip;
-                    new Thread(() -> checkComputers(finalIP, minPort, maxPort, timeout)).start();
+                    new Thread(() -> checkComputers(finalIP, minPort, maxPort, timeout, offset)).start();
                     ilosc_komp++;
                 }
             } catch (IOException e) {
@@ -36,16 +37,16 @@ public class Main {
             System.out.println("Sprawdzamy komputerow: " + ilosc_komp);
         } else {
             for (String ip : args) {
-                new Thread(() -> checkComputers(ip, minPort, maxPort, timeout)).start();
+                new Thread(() -> checkComputers(ip, minPort, maxPort, timeout, offset)).start();
             }
             System.out.println("Sprawdzamy komputerow: " + args.length);
         }
 
     }
 
-    private static void checkComputers(String IP, int minPort, int maxPort, int timeout) {
+    private static void checkComputers(String IP, int minPort, int maxPort, int timeout, int offset) {
         int DELAY = 100;
-        int OFFSET = 1000; // how many threads are running at the same time
+        int OFFSET = Math.min(maxPort - minPort, offset);
         List<Thread> threadList = new ArrayList<>();
 
         try(
