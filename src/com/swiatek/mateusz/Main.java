@@ -19,7 +19,7 @@ public class Main {
         int minPort = 1;
         int maxPort = 65535;
         int timeout = 100;
-        List<Thread> threadComputerList = new ArrayList<>();
+        // List<Thread> threadComputerList; // when splitting into classes, you will need to check the state of the computers' threads.
         if(args[0].equals("-")){
             int ilosc_komp = 0;
             String fileName = args[1];
