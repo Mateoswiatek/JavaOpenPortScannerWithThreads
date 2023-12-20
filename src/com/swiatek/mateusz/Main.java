@@ -14,22 +14,31 @@ import java.util.stream.Collectors;
 */
 
 public class Main {
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException {
         //String IP = "127.0.0.1";
         int minPort = 1;
         int maxPort = 200; // 65535
         int timeout = 100;
         int offset = 1000;
-        // List<Thread> threadComputerList; // when splitting into classes, you will need to check the state of the computers' threads.
+        List<Thread> threadComputerList; // when splitting into classes, you will need to check the state of the computers' threads.
+        PipedOutputStream outputStreamComp = new PipedOutputStream();
+        PipedInputStream inputStreamComp = new PipedInputStream(outputStreamComp);
+
+        int n = 10;
+        while(n-->0){
+            CheckComputerThread checkComputerThread = new CheckComputerThread(inputStreamComp, minPort, maxPort);
+            // chyba jednak PipedStream się nie nada do tego. doczytać, może jest prostrzy sposób, ew flagi i oczekwania.
+            // wrzuamy wszystkie kombinacja do streamu, a np 20 wątków sobie wychwytuje i dopisuje do odpowiednich plików????
+
+        }
+
         if(args[0].equals("-")){
             int ilosc_komp = 0;
             String fileName = args[1];
             try (BufferedReader br = new BufferedReader(new FileReader(fileName))) {
                 String ip;
                 while ((ip = br.readLine()) != null) {
-                    String finalIP = ip;
-                    new Thread(() -> checkComputers(finalIP, minPort, maxPort, timeout, offset)).start();
-                    ilosc_komp++;
+                    outputStreamComp.write(Integer.parseInt(ip));
                 }
             } catch (IOException e) {
                 e.printStackTrace();
@@ -37,7 +46,7 @@ public class Main {
             System.out.println("Sprawdzamy komputerow: " + ilosc_komp);
         } else {
             for (String ip : args) {
-                new Thread(() -> checkComputers(ip, minPort, maxPort, timeout, offset)).start();
+                outputStreamComp.write(Integer.parseInt(ip));
             }
             System.out.println("Sprawdzamy komputerow: " + args.length);
         }
