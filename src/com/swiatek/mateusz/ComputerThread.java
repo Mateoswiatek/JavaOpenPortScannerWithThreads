@@ -21,7 +21,6 @@ public class ComputerThread extends Thread {
     public void run() {
         boolean flaga = false;
         for(int port : ports){
-            //System.out.println("port: " + port);
 
             try(Socket socket = new Socket()){
                 socket.connect(new InetSocketAddress(ip, port), timeout);
