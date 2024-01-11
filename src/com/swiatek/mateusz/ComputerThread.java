@@ -23,14 +23,13 @@ public class ComputerThread extends Thread {
     @Override
     public void run() {
         if(writeAll){
-            boolean flaga;
+            int flaga;
             for(int port : ports){
-                System.out.println(port);
                 try(Socket socket = new Socket()){
                     socket.connect(new InetSocketAddress(ip, port), timeout);
-                    flaga = true;
+                    flaga = 1;
                 } catch (Exception e){
-                    flaga = false;
+                    flaga = 0;
                 }
 
                 try {

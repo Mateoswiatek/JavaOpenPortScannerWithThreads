@@ -20,7 +20,7 @@ public class PortScanner {
     int kubelki = 5;
 
     int timeout = 200;
-    boolean writeAll = false;
+    boolean writeAll = true;
     public PortScanner(List<String> computers, List<Integer> ports, int cntthreads){
         this.computers = computers;
         this.ports = ports;
@@ -50,6 +50,9 @@ public class PortScanner {
     }
 
     public void scannComputers(List<String> newcomputers, List<Integer> ports, int kubelki){
+        System.out.println(newcomputers);
+        System.out.println(ports);
+        if(kubelki > ports.size()) kubelki = 1;
         int startindex = 0;
         int diff = ports.size() / kubelki;
         for(String computer : newcomputers){
@@ -71,13 +74,32 @@ public class PortScanner {
         // aby caly czas nie spamowac
         // Tworzymy dwa pliki, otware i zamkniete, jesli otwary to do otwaretgo, jesli zamkniety to do zamnietetgo
         // Druga wersja - Tworzymy tyle plikow ile jest komputerow, zapisujemy najpierw otwarte a potem zamkniete porty.
+
+        //TODO Jesli zwracamy tylko otwarte watki, to trzeba byc przygotowanym, ze kolejka bedzie pusta. ale chyba lepiej i tak zwracac cos
+        /*
         try {
             for(int i =0; i<ports.size()* newcomputers.size(); i++){
+
                 System.out.println(results.take());
             }
         } catch (InterruptedException e){
             System.out.println(e);
+        } */
+
+        // przetwarzanie w Scanerze
+        try {
+            for(int i =0; i<ports.size()* newcomputers.size(); i++){
+                String str = results.take();
+//                System.out.println(str);
+                if(str.charAt(str.length()-1) == '1'){
+                    System.out.println(str);
+                }
+
+            }
+        } catch (InterruptedException e){
+            System.out.println(e);
         }
+
 
     }
     public PortScanner setComputers(List<String> newcomputers){

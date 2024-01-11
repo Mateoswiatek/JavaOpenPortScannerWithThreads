@@ -19,8 +19,9 @@ public class Main {
         for(int i = 0; i<65535;i++){
             ports.add(i);
         }
-        PortScanner portScanner = new PortScanner(computers, ports, 16);
-        portScanner.scannComputers();
-//        new PortScanner().scannComputers("127.0.0.1", 20);
+//        PortScanner portScanner = new PortScanner(computers, ports, 16);
+//        portScanner.setWriteAll(1);
+//        portScanner.scannComputers();
+        new PortScanner().scannComputers("127.0.0.1", 20);
     }
 }
