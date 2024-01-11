@@ -44,7 +44,7 @@ public class ComputerThread extends Thread {
                 try(Socket socket = new Socket()){
                     socket.connect(new InetSocketAddress(ip, port), timeout);
 //                    results.put(ip+":"+port); // problem, bo potem nie wiadomo czy faktycznie
-                    results.put(ip+":"+port+" "+1);
+                    results.put(ip+":"+port+" 1");
 
                 } catch (InterruptedException e) {
                     throw new RuntimeException(e);

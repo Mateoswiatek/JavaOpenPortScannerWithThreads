@@ -2,6 +2,9 @@ package com.swiatek.mateusz;
 
 import org.junit.jupiter.api.Test;
 
+import java.util.ArrayList;
+import java.util.List;
+
 
 class PortScannerTest {
 
@@ -11,7 +14,8 @@ class PortScannerTest {
     }
 
     @Test
-    void testScannComputers() {
+    void testScannOneComputerPorts() {
+        new PortScanner().scannComputers("127.0.0.1", new ArrayList<>(List.of(1, 2, 3, 3, 4, 5, 20, 30, 40, 50, 60, 62, 63, 6, 5, 5, 5,5 ,4)));
     }
 
     @Test
