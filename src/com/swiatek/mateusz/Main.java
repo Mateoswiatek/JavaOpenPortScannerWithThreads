@@ -16,10 +16,11 @@ public class Main {
         List<Integer> ports = new ArrayList<>();
         List<String> computers = new ArrayList<>();
         computers.add("127.0.0.1");
-        for(int i = 0; i<10;i++){
+        for(int i = 0; i<65535;i++){
             ports.add(i);
         }
-        Scanner scanner = new Scanner(computers, ports, 16);
-        scanner.scannComputers();
+        PortScanner portScanner = new PortScanner(computers, ports, 16);
+        portScanner.scannComputers();
+//        new PortScanner().scannComputers("127.0.0.1", 20);
     }
 }

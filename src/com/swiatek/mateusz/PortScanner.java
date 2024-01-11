@@ -11,34 +11,50 @@ import java.util.concurrent.Executors;
  * kazdy watek dostaje koknkretny adres ip oraz zakres portow ktore ma sprawdzic.
  * Wyniki wrzuca do kolejki. watek Scanner odczytuje te wartosci. Dodajac do buforw dla kazdego kompa
  */
-public class Scanner {
+public class PortScanner {
     ExecutorService executor;
     BlockingQueue<String> results = new ArrayBlockingQueue<>(100);
-    int cntthreads;
-    List<Integer> ports;
-    List<String> computers;
-    public Scanner(List<String> computers, List<Integer> ports, int cntthreads){
+    int cntthreads = 16;
+    List<Integer> ports = new ArrayList<>();
+    List<String> computers = new ArrayList<>();
+    int kubelki = 5;
+
+    int timeout = 200;
+    boolean writeAll = false;
+    public PortScanner(List<String> computers, List<Integer> ports, int cntthreads){
         this.computers = computers;
         this.ports = ports;
         this.cntthreads = cntthreads;
         this.executor = Executors.newFixedThreadPool(cntthreads);
     }
+    public PortScanner(){
+        cntthreads = 16;
+        executor = Executors.newFixedThreadPool(cntthreads);
+    }
 
     public void scannComputers(){
-        scannComputers(computers, ports, 1);
+        scannComputers(computers, ports, kubelki);
     }
     public void scannComputers(List<String> newcomputers){
-        scannComputers(newcomputers, ports, 1);
+        scannComputers(newcomputers, ports, kubelki);
     }
     public void scannComputersPorts(List<Integer> newports){
-        scannComputers(computers, newports, 1);
+        scannComputers(computers, newports, kubelki);
     }
+    public void scannComputers(String computer, List<Integer> ports){
+
+        scannComputersPorts(ports);
+    }
+    public void scannComputers(String computer, int port){
+        scannComputers(new ArrayList<>(List.of(computer)), new ArrayList<>(List.of(port)), kubelki);
+    }
+
     public void scannComputers(List<String> newcomputers, List<Integer> ports, int kubelki){
         int startindex = 0;
         int diff = ports.size() / kubelki;
         for(String computer : newcomputers){
             for(int i=0;i<kubelki;i++) {
-                executor.execute(new ComputerThread(computer, ports.subList(startindex, (startindex += diff)), results, 200));
+                executor.execute(new ComputerThread(computer, ports.subList(startindex, (startindex += diff)), results, timeout, writeAll));
             }
         }
         executor.shutdown();
@@ -58,27 +74,38 @@ public class Scanner {
         try {
             for(int i =0; i<ports.size()* newcomputers.size(); i++){
                 System.out.println(results.take());
-                //results.take();
-
             }
         } catch (InterruptedException e){
             System.out.println(e);
         }
 
     }
-    public void setComputers(List<String> newcomputers){
+    public PortScanner setComputers(List<String> newcomputers){
         computers = newcomputers;
+        return this;
     }
-    public void setPorts(List<Integer> newports){
+    public PortScanner setPorts(List<Integer> newports){
         ports = newports;
+        return this;
     }
     //TODO czy to jest bezpieczne ? takie modyfikowanie, ew wymuszenie, że zmiana może być tylko w tedy
     // kiedy zaden watek nie wykonuje zadnego zadania.
-    public void setCntthreads(int cnt){
+    public PortScanner setCntthreads(int cnt){
         cntthreads = cnt;
         executor = Executors.newFixedThreadPool(cntthreads);
+        return this;
     }
-
-
+    public PortScanner setTimeout(int timeout){
+        this.timeout = timeout;
+        return this;
+    }
+    public PortScanner setWriteAll(boolean writeAll){
+        this.writeAll = writeAll;
+        return this;
+    }
+    public PortScanner setWriteAll(int writeAll){
+        this.writeAll = (writeAll != 0);
+        return this;
+    }
 
 }
