@@ -10,11 +10,13 @@ import java.util.concurrent.Executors;
 /**
  * kazdy watek dostaje koknkretny adres ip oraz zakres portow ktore ma sprawdzic.
  * Wyniki wrzuca do kolejki. watek Scanner odczytuje te wartosci. Dodajac do buforw dla kazdego kompa
+ *
  */
 public class PortScanner {
     ExecutorService executor;
     BlockingQueue<String> results = new ArrayBlockingQueue<>(100);
     int cntthreads = 16;
+    //TODO Zamienic List ports na set (aby nie bylo syfu gdyby sie powtarzaly) glownie przy analizowaniu wynikow?
     List<Integer> ports = new ArrayList<>();
     List<String> computers = new ArrayList<>();
     int kubelki = 5;
@@ -42,22 +44,19 @@ public class PortScanner {
         scannComputers(computers, newports, kubelki);
     }
     public void scannComputers(String computer, List<Integer> ports){
-
-        scannComputersPorts(ports);
+        scannComputers(new ArrayList<>(List.of(computer)), ports, kubelki);
     }
     public void scannComputers(String computer, int port){
         scannComputers(new ArrayList<>(List.of(computer)), new ArrayList<>(List.of(port)), kubelki);
     }
 
-    public void scannComputers(List<String> newcomputers, List<Integer> ports, int kubelki){
-        System.out.println(newcomputers);
-        System.out.println(ports);
-        if(kubelki > ports.size()) kubelki = 1;
-        int startindex = 0;
-        int diff = ports.size() / kubelki;
+    public void scannComputers(List<String> newcomputers, List<Integer> ports, int unitNumberOfPorts){
+        //TODO czy mozna jakos inaczej podzielic, szybciej i bezpieczniej
+        int size = ports.size();
         for(String computer : newcomputers){
-            for(int i=0;i<kubelki;i++) {
-                executor.execute(new ComputerThread(computer, ports.subList(startindex, (startindex += diff)), results, timeout, writeAll));
+            for(int i=0;i<size;i+=unitNumberOfPorts) {
+                int koniec = Math.min(i + unitNumberOfPorts, size);
+                executor.execute(new ComputerThread(computer, ports.subList(i, koniec), results, timeout, writeAll));
             }
         }
         executor.shutdown();
@@ -88,13 +87,19 @@ public class PortScanner {
 
         // przetwarzanie w Scanerze
         try {
-            for(int i =0; i<ports.size()* newcomputers.size(); i++){
-                String str = results.take();
-//                System.out.println(str);
-                if(str.charAt(str.length()-1) == '1'){
-                    System.out.println(str);
+            if(writeAll){
+                for(int i =0; i<ports.size()* newcomputers.size(); i++){
+                    System.out.println(results.take());
                 }
+            } else {
+                for (int i = 0; i < ports.size() * newcomputers.size(); i++) {
+                    String str = results.take();
+//                System.out.println(str);
+                    if (str.charAt(str.length() - 1) == '1') {
+                        System.out.println(str);
+                    }
 
+                }
             }
         } catch (InterruptedException e){
             System.out.println(e);
