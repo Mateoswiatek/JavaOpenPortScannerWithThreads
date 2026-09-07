@@ -88,7 +88,7 @@ public class PortScanner {
         // przetwarzanie w Scanerze
         try {
             if(writeAll){
-                for(int i =0; i<ports.size()* newcomputers.size(); i++){
+                for(int i =0; i<ports.size() * newcomputers.size(); i++){
                     System.out.println(results.take());
                 }
             } else {
